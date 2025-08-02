@@ -7,6 +7,7 @@ sudo apt install -y autoconf automake libtool curl make g++ unzip
 sudo apt install -y pkg-config
 sudo apt install -y libssl-dev
 sudo apt install -y zlib1g-dev
+sudo apt install -y libsystemd-dev
 
 echo "=====> Building gRPC..."
 GRPC_DIR="$(pwd)/3rdparty/grpc"
