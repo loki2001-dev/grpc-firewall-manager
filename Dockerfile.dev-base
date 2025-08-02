@@ -1,0 +1,110 @@
+# Use Ubuntu 22.04 as base image
+FROM ubuntu:22.04
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install required packages for building Protobuf and gRPC
+RUN apt-get update && \
+    apt-get install -y \
+        build-essential \
+        cmake \
+        git \
+        autoconf \
+        automake \
+        libtool \
+        curl \
+        make \
+        g++ \
+        unzip \
+        pkg-config \
+        libssl-dev \
+        zlib1g-dev \
+        libsystemd-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /build
+
+# ----------------------------
+# COPY Protobuf source
+# ----------------------------
+COPY 3rdparty/protobuf /build/3rdparty/protobuf
+
+# ----------------------------
+# Build and install Protobuf
+# ----------------------------
+RUN PROTOBUF_DIR=/build/3rdparty/protobuf && \
+    if [ ! -d "$PROTOBUF_DIR" ]; then \
+      echo "Error: Protobuf source directory not found"; exit 1; \
+    fi && \
+    cd "$PROTOBUF_DIR" && \
+    if [ ! -f "CMakeLists.txt" ]; then \
+      echo "Error: CMakeLists.txt not found in protobuf root directory"; exit 1; \
+    fi && \
+    rm -rf build && mkdir build && cd build && \
+    cmake .. \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -Dprotobuf_BUILD_TESTS=OFF \
+      -Dprotobuf_BUILD_SHARED_LIBS=ON \
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+      -DCMAKE_CXX_FLAGS="-Wno-trigraphs -Wno-attributes -Wreturn-type" && \
+    cmake --build . --config Release --parallel $(nproc) && \
+    cmake --install . && \
+    ldconfig
+
+# ----------------------------
+# COPY gRPC source
+# ----------------------------
+COPY 3rdparty/grpc /build/3rdparty/grpc
+
+# ----------------------------
+# Build and install gRPC
+# ----------------------------
+RUN GRPC_DIR=/build/3rdparty/grpc && \
+    if [ ! -d "$GRPC_DIR" ]; then \
+      echo "Error: gRPC source directory not found"; exit 1; \
+    fi && \
+    cd "$GRPC_DIR" && \
+    if [ ! -f "CMakeLists.txt" ]; then \
+      echo "Error: CMakeLists.txt not found in grpc root directory"; exit 1; \
+    fi && \
+    rm -rf build && mkdir build && cd build && \
+    cmake .. \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DgRPC_INSTALL=ON \
+      -DgRPC_BUILD_TESTS=OFF \
+      -DgRPC_ABSL_PROVIDER=module \
+      -DgRPC_CARES_PROVIDER=module \
+      -DgRPC_PROTOBUF_PROVIDER=module \
+      -DgRPC_RE2_PROVIDER=module \
+      -DgRPC_SSL_PROVIDER=package \
+      -DgRPC_ZLIB_PROVIDER=package \
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+      -DCMAKE_CXX_FLAGS="-Wno-trigraphs -Wno-attributes -Wreturn-type" && \
+    cmake --build . --config Release --parallel $(nproc) && \
+    cmake --install . && \
+    ldconfig
+
+# ----------------------------
+# Verify installations
+# ----------------------------
+RUN protoc --version && \
+    # CHECK
+    if command -v grpc_cpp_plugin >/dev/null 2>&1; then \
+      echo "grpc_cpp_plugin found: $(which grpc_cpp_plugin)"; \
+    fi && \
+    # CHECK
+    if [ -d "/usr/local/include/grpc" ] || [ -d "/usr/local/include/grpcpp" ]; then \
+      echo "gRPC headers found in /usr/local/include/"; \
+    fi && \
+    # CHECK
+    if ls /usr/local/lib/libgrpc*.so* >/dev/null 2>&1 || ls /usr/local/lib/libgrpc*.a >/dev/null 2>&1; then \
+      echo "gRPC libraries found in /usr/local/lib/"; \
+    fi && \
+    echo "=====> gRPC installation and verification complete"
+
+# Default shell
+CMD [ "bash" ]
