@@ -43,6 +43,7 @@ smarthome-grpc-controller/
 - [gRPC](https://github.com/grpc/grpc) (included as a submodule)
 - [protobuf](https://github.com/protocolbuffers/protobuf) (included as a submodule)
 - [spdlog](https://github.com/gabime/spdlog) (included as a submodule)
+- [BloomRPC](https://github.com/bloomrpc/bloomrpc/releases) (useful for testing .proto files included as a project)
 
 ### Build Instructions
 ```bash
