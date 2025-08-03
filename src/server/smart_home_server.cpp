@@ -43,5 +43,7 @@ int32_t main(int32_t argc, char *argv[]) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
+    server->Shutdown();
+
     return EXIT_SUCCESS;
 }
