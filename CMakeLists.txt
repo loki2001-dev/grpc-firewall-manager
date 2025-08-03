@@ -1,10 +1,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.28)
-PROJECT(grpc_firewall-manager)
+PROJECT(smart_home_controller)
 
 # OPTION (Standard)
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-trigraphs -Wno-attributes -Wreturn-type")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-trigraphs -Wno-attributes -Wreturn-type -Wnonnull -Wunused-result")
 
 # AVOID conflicts
 SET(protobuf_BUILD_TESTS OFF CACHE BOOL "Build protobuf tests" FORCE)
@@ -81,28 +81,47 @@ FOREACH(PROTO_FILE ${PROTO_FILES})
 ENDFOREACH()
 
 # INCLUDE
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
-ADD_EXECUTABLE(firewall_server
-        src/main_server.cpp
+# FIND ALL client sources
+FILE(GLOB_RECURSE CLIENT_SRCS
+        "src/client/*.cpp"
+        "src/devices/*.cpp"
+)
+
+# FIND ALL server sources
+FILE(GLOB_RECURSE SERVER_SRCS
+        "src/server/*.cpp"
+        "src/devices/*.cpp"
+)
+
+# ADD EXECUTABLE (client)
+ADD_EXECUTABLE(smart_home_client
+        ${CLIENT_SRCS}
         ${PROTO_SRCS}
         ${GRPC_SRCS}
 )
 
 # LINk
-TARGET_LINK_LIBRARIES(firewall_server PRIVATE
+TARGET_LINK_LIBRARIES(smart_home_client PRIVATE
+        spdlog::spdlog
         libprotobuf
         grpc++
 )
 
-ADD_EXECUTABLE(firewall_client
-        src/main_client.cpp
+# ADD EXECUTABLE (server)
+ADD_EXECUTABLE(smart_home_server
+        ${SERVER_SRCS}
         ${PROTO_SRCS}
         ${GRPC_SRCS}
 )
 
 # LINk
-TARGET_LINK_LIBRARIES(firewall_client PRIVATE
+TARGET_LINK_LIBRARIES(smart_home_server PRIVATE
+        spdlog::spdlog
         libprotobuf
         grpc++
 )
