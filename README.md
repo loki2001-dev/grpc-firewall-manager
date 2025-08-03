@@ -5,7 +5,7 @@
 
 ## Overview
 - Implements a gRPC-based smart home controller system
-- Supports communication between a central controller and various smart devices such as lights, thermostats, and sensors
+- Supports communication between a central controller and various smart devices such as lights, thermostats, door lock, sensors
 - Modular architecture separating interface definitions, business logic, and transport layers
 - Designed for flexible integration of new devices
 
@@ -16,7 +16,7 @@
 - gRPC service for remote control and monitoring
 - Protobuf-based schema definition for device commands and status
 - Easy-to-extend structure for additional device types
-- Sample implementation for lighting and climate devices
+- Sample implementation for lighting, climate, sensor, door lock devices
 - Includes server and client
 
 ---
@@ -32,6 +32,8 @@ smarthome-grpc-controller/
 │       ├── base/              # Abstract interfaces and shared types
 │       ├── light/             # Light device implementations
 │       └── climate/           # Climate (thermostat/sensor) devices
+│       └── security/          # Security device implementations
+│       └── sensor/            # Sensor device implementations
 ├── CMakeLists.txt             # CMake build script
 ├── README.md
 ```
