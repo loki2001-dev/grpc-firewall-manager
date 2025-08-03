@@ -1,5 +1,5 @@
-#ifndef THERMOSTAT_H
-#define THERMOSTAT_H
+#ifndef DOOR_LOCK_H
+#define DOOR_LOCK_H
 
 #pragma once
 
@@ -7,15 +7,15 @@
 #include <string>
 #include "../base/device.h"
 
-class Thermostat : public Device {
+class DoorLock : public Device {
 public:
-    Thermostat(const std::string& id, const std::string& name, const std::string& location);
+    DoorLock(const std::string& id, const std::string& name, const std::string& location);
 
     bool Control(const std::string& action, const std::map<std::string, std::string>& parameters, std::string& out_message) override;
     std::map<std::string, std::string> StatusProperties() const override;
 
 private:
-    double _temperature;
+    bool _locked;
 };
 
-#endif // THERMOSTAT_H
+#endif // DOOR_LOCK_H

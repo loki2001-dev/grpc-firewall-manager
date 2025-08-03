@@ -1,16 +1,35 @@
 #include "service_impl.h"
 #include "../devices/light/light.h"
+#include "../devices/climate/thermostat.h"
 #include "../devices/climate/temperature_sensor.h"
+#include "../devices/security/door_lock.h"
+#include "../devices/sensor/motion_sensor.h"
 #include <spdlog/spdlog.h>
 #include <thread>
 #include <chrono>
 
 SmartHomeControllerServiceImpl::SmartHomeControllerServiceImpl() {
     spdlog::info("Initializing SmartHomeController service");
+
+    // LIGHT
     _manager.RegisterDevice(std::make_shared<Light>("light01", "Living Room Light", "Living Room"));
     spdlog::info("Registered device: light01 (Living Room Light)");
+
+    // SENSOR
     _manager.RegisterDevice(std::make_shared<TemperatureSensor>("temp01", "Hall Sensor", "Hallway"));
     spdlog::info("Registered device: temp01 (Hall Sensor)");
+
+    // THERMOSTAT
+    _manager.RegisterDevice(std::make_shared<Thermostat>("thermo01", "Main Thermostat", "Living Room"));
+    spdlog::info("Registered device: thermo01 (Main Thermostat)");
+
+    // DOOR LOCK
+    _manager.RegisterDevice(std::make_shared<DoorLock>("door01", "Front Door", "Entrance"));
+    spdlog::info("Registered device: door01 (Front Door)");
+
+    // MOTION SENSOR
+    _manager.RegisterDevice(std::make_shared<MotionSensor>("motion01", "Garage Motion Sensor", "Garage"));
+    spdlog::info("Registered device: motion01 (Garage Motion Sensor)");
 }
 
 grpc::Status SmartHomeControllerServiceImpl::ControlDevice(grpc::ServerContext*, const smarthome::DeviceControlRequest* req, smarthome::DeviceControlResponse* res) {
