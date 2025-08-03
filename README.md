@@ -4,7 +4,10 @@
 ---
 
 ## Overview
-- This project implements a gRPC-based smart home controller system, enabling communication between a central controller and various smart home devices such as lights, thermostats, and sensors. The architecture supports modular device integration with clean separation between interface definitions, business logic, and transport layers.
+- Implements a gRPC-based smart home controller system
+- Supports communication between a central controller and various smart devices such as lights, thermostats, and sensors
+- Modular architecture separating interface definitions, business logic, and transport layers
+- Designed for flexible integration of new devices
 
 ---
 
