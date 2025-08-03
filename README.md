@@ -50,7 +50,7 @@ smarthome-grpc-controller/
 sudo apt update
 
 # Clone the repository
-git clone https://github.com/your-username/smarthome-grpc-controller.git
+git clone https://github.com/loki2001-dev/smarthome-grpc-controller.git
 cd smarthome-grpc-controller
 
 # Initialize submodules
@@ -61,19 +61,6 @@ git submodule update --init --recursive
 
 # Build the project
 . build_project.sh
-```
-
----
-
-## Usage
-### Start Server
-```bash
-./build/smarthome_server
-```
-
-### Run Client
-```bash
-./build/smarthome_client
 ```
 
 ---
