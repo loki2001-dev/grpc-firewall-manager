@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package smarthome;
+
+// Smart Home Control Service
+service SmartHomeController {
+  // Control device
+  rpc ControlDevice(DeviceControlRequest) returns (DeviceControlResponse);
+
+  // Query device status
+  rpc GetDeviceStatus(DeviceStatusRequest) returns (DeviceStatusResponse);
+
+  // List all devices
+  rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
+
+  // Stream sensor data
+  rpc StreamSensorData(StreamSensorRequest) returns (stream SensorDataResponse);
+}
+
+// Device type enumeration
+enum DeviceType {
+  UNKNOWN = 0;
+  LIGHT = 1;
+  THERMOSTAT = 2;
+  DOOR_LOCK = 3;
+  SECURITY_CAMERA = 4;
+  MOTION_SENSOR = 5;
+  TEMPERATURE_SENSOR = 6;
+}
+
+// Device status enumeration
+enum DeviceStatus {
+  OFFLINE = 0;
+  ONLINE = 1;
+  ERROR = 2;
+  MAINTENANCE = 3;
+}
+
+// Device control request message
+message DeviceControlRequest {
+  string device_id = 1;
+  DeviceType device_type = 2;
+  string action = 3;  // Actions like "turn_on", "turn_off", "set_brightness", "set_temperature", etc.
+  map<string, string> parameters = 4;  // Parameters like brightness=80, temperature=22, etc.
+}
+
+// Device control response message
+message DeviceControlResponse {
+  bool success = 1;
+  string message = 2;
+  string device_id = 3;
+}
+
+// Device status request message
+message DeviceStatusRequest {
+  string device_id = 1;
+}
+
+// Device status response message
+message DeviceStatusResponse {
+  string device_id = 1;
+  DeviceType device_type = 2;
+  DeviceStatus status = 3;
+  string name = 4;
+  string location = 5;
+  map<string, string> properties = 6;  // Current brightness, temperature, etc.
+  int64 last_updated = 7;  // Last update timestamp
+}
+
+// Device list request message
+message ListDevicesRequest {
+  DeviceType filter_type = 1;  // Filter by specific type (optional)
+}
+
+// Device list response message
+message ListDevicesResponse {
+  repeated DeviceInfo devices = 1;
+}
+
+// Device information message
+message DeviceInfo {
+  string device_id = 1;
+  DeviceType device_type = 2;
+  DeviceStatus status = 3;
+  string name = 4;
+  string location = 5;
+}
+
+// Sensor data streaming request message
+message StreamSensorRequest {
+  repeated string device_ids = 1;  // List of sensor IDs to monitor
+  int32 interval_seconds = 2;      // Data transmission interval in seconds
+}
+
+// Sensor data response message
+message SensorDataResponse {
+  string device_id = 1;
+  DeviceType sensor_type = 2;
+  map<string, double> sensor_values = 3;  // Sensor values like temperature=23.5, humidity=65.2, etc.
+  int64 timestamp = 4;
+}
