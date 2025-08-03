@@ -6,6 +6,7 @@
 #include <thread>
 #include <string>
 #include <grpcpp/grpcpp.h>
+#include <spdlog/spdlog.h>
 #include "service_impl.h"
 
 std::atomic<bool> running{true};
@@ -36,7 +37,7 @@ int32_t main(int32_t argc, char *argv[]) {
     builder.RegisterService(&service);
 
     auto server = builder.BuildAndStart();
-    std::cout << "SmartHomeController server listening on " << address << std::endl;
+    spdlog::info("SmartHomeController server listening on {}", address);
     server->Wait();
 
     while (running) {

@@ -1,5 +1,6 @@
 #include <grpcpp/grpcpp.h>
-#include <iostream>
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/fmt.h>
 #include "client_commands.h"
 #include "../build/smart_home.grpc.pb.h"
 
@@ -18,11 +19,14 @@ void ClientCommands::Run() {
     list_req.set_filter_type(smarthome::DeviceType::UNKNOWN);
     smarthome::ListDevicesResponse list_res;
     grpc::ClientContext ctx1;
+
     if (stub->ListDevices(&ctx1, list_req, &list_res).ok()) {
-        std::cout << "Devices:\n";
+        spdlog::info("Devices:");
         for (const auto& info : list_res.devices()) {
-            std::cout << " - " << info.device_id() << " (" << info.name() << " @ " << info.location() << ")\n";
+            spdlog::info(" - {} ({} @ {})", info.device_id(), info.name(), info.location());
         }
+    } else {
+        spdlog::error("Failed to list devices");
     }
 
     // LIGHT
@@ -33,8 +37,11 @@ void ClientCommands::Run() {
     (*ctrl_req.mutable_parameters())[""] = "";
     smarthome::DeviceControlResponse ctrl_res;
     grpc::ClientContext ctx2;
+
     if (stub->ControlDevice(&ctx2, ctrl_req, &ctrl_res).ok()) {
-        std::cout << ctrl_res.message() << "\n";
+        spdlog::info("Device control response: {}", ctrl_res.message());
+    } else {
+        spdlog::error("Failed to control device: light01");
     }
 
     // SENSOR
@@ -44,11 +51,14 @@ void ClientCommands::Run() {
     grpc::ClientContext ctx3;
     auto stream = stub->StreamSensorData(&ctx3, stream_req);
     smarthome::SensorDataResponse sensor_res;
+
+    spdlog::info("Starting sensor data stream...");
     while (stream->Read(&sensor_res)) {
-        std::cout << "Sensor " << sensor_res.device_id() << ": ";
-        for (auto& kv : sensor_res.sensor_values()) {
-            std::cout << kv.first << "=" << kv.second << " ";
+        std::string sensor_data = fmt::format("Sensor {}: ", sensor_res.device_id());
+        for (const auto& kv : sensor_res.sensor_values()) {
+            sensor_data += fmt::format("{}={} ", kv.first, kv.second);
         }
-        std::cout << "\n";
+        spdlog::info(sensor_data);
     }
+    spdlog::info("Sensor data stream ended");
 }
