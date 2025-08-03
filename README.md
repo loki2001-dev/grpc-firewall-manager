@@ -1,2 +1,82 @@
-# grpc-firewall-manager
-A real-time firewall policy controller using gRPC for dynamic IP/Port-based filtering.
+# smarthome-grpc-controller (C++17 & gRPC)
+
+A Modular and Extensible Smart Home Device Management System using gRPC and Protocol Buffers.
+
+---
+
+## Overview
+This project implements a gRPC-based smart home controller system, enabling communication between a central controller and various smart home devices such as lights, thermostats, and sensors. The architecture supports modular device integration with clean separation between interface definitions, business logic, and transport layers.
+
+---
+
+## Features
+- Modular smart device abstraction using C++17 classes
+- gRPC service for remote control and monitoring
+- Protobuf-based schema definition for device commands and status
+- Easy-to-extend structure for additional device types
+- Sample implementation for lighting and climate devices
+- Includes server and client
+
+---
+
+## Directory Structure
+```
+smarthome-grpc-controller/
+├── proto/                     # gRPC service and message definitions (smart_home.proto)
+├── src/
+│   ├── client/                # CLI client implementation
+│   ├── server/                # gRPC server and service logic
+│   └── devices/
+│       ├── base/              # Abstract interfaces and shared types
+│       ├── light/             # Light device implementations
+│       └── climate/           # Climate (thermostat/sensor) devices
+├── CMakeLists.txt             # CMake build script
+├── README.md
+```
+
+---
+
+## Getting Started
+### Prerequisites
+- Linux (Ubuntu 20.04 or later recommended)
+- Requires DPDK 21.11 or later installed (included as a sh script)
+- Requires CMake 3.14 or later
+- Requires C++17 compatible compiler
+- gRPC and Protocol Buffers (v1.56+)
+- [gRPC](https://github.com/grpc/grpc) (included as a submodule)
+- [protobuf](https://github.com/protocolbuffers/protobuf) (included as a submodule)
+- [spdlog](https://github.com/gabime/spdlog) (included as a submodule)
+
+### Build Instructions
+```bash
+# Update package lists
+sudo apt update
+
+# Clone the repository
+git clone https://github.com/your-username/smarthome-grpc-controller.git
+cd smarthome-grpc-controller
+
+# Initialize submodules
+git submodule update --init --recursive
+
+# Install dependencies and build Protobuf/gRPC
+. install_grpc.sh
+
+# Build the project
+. build_project.sh
+```
+
+---
+
+## Usage
+### Start Server
+```bash
+./build/smarthome_server
+```
+
+### Run Client
+```bash
+./build/smarthome_client
+```
+
+---
