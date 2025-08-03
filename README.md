@@ -1,11 +1,10 @@
 # smarthome-grpc-controller (C++17 & gRPC)
-
-A Modular and Extensible Smart Home Device Management System using gRPC and Protocol Buffers.
+- A Modular and Extensible Smart Home Device Management System using gRPC and Protocol Buffers.
 
 ---
 
 ## Overview
-This project implements a gRPC-based smart home controller system, enabling communication between a central controller and various smart home devices such as lights, thermostats, and sensors. The architecture supports modular device integration with clean separation between interface definitions, business logic, and transport layers.
+- This project implements a gRPC-based smart home controller system, enabling communication between a central controller and various smart home devices such as lights, thermostats, and sensors. The architecture supports modular device integration with clean separation between interface definitions, business logic, and transport layers.
 
 ---
 
@@ -39,10 +38,8 @@ smarthome-grpc-controller/
 ## Getting Started
 ### Prerequisites
 - Linux (Ubuntu 20.04 or later recommended)
-- Requires DPDK 21.11 or later installed (included as a sh script)
 - Requires CMake 3.14 or later
 - Requires C++17 compatible compiler
-- gRPC and Protocol Buffers (v1.56+)
 - [gRPC](https://github.com/grpc/grpc) (included as a submodule)
 - [protobuf](https://github.com/protocolbuffers/protobuf) (included as a submodule)
 - [spdlog](https://github.com/gabime/spdlog) (included as a submodule)
