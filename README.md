@@ -5,7 +5,7 @@
 
 ## Overview
 - Implements a gRPC-based smart home controller system
-- Supports communication between a central controller and various smart devices such as lights, thermostats, door lock, sensors
+- Supports communication between a central controller and various smart devices such as lights, thermostats, door lock, and sensors
 - Modular architecture separating interface definitions, business logic, and transport layers
 - Designed for flexible integration of new devices
 
@@ -18,6 +18,94 @@
 - Easy-to-extend structure for additional device types
 - Sample implementation for lighting, climate, sensor, door lock devices
 - Includes server and client
+
+---
+
+## gRPC API Routing
+
+### Service: `SmartHomeController`
+
+| RPC Method         | Request Message        | Response Message            | Description                                                 |
+|--------------------|------------------------|-----------------------------|-------------------------------------------------------------|
+| `ControlDevice`    | `DeviceControlRequest` | `DeviceControlResponse`     | Control a smart home device (e.g., turn on, set brightness) |
+| `GetDeviceStatus`  | `DeviceStatusRequest`  | `DeviceStatusResponse`      | Query current status of a specific device                   |
+| `ListDevices`      | `ListDevicesRequest`   | `ListDevicesResponse`       | Retrieve a list of all registered smart devices             |
+| `StreamSensorData` | `StreamSensorRequest`  | `stream SensorDataResponse` | Stream real-time data from specified sensor devices         |
+
+### Messages
+
+#### DeviceControlRequest
+
+| Field         | Type                 | Description                                         |
+|---------------|----------------------|-----------------------------------------------------|
+| `device_id`   | `string`             | Unique ID of the device                             |
+| `device_type` | `DeviceType`         | Type of device                                      |
+| `action`      | `string`             | Action to perform (e.g., "turn_on", "set_temp")     |
+| `parameters`  | `map<string,string>` | Optional parameters (e.g., brightness, temperature) |
+
+#### DeviceControlResponse
+
+| Field       | Type     | Description                        |
+|-------------|----------|------------------------------------|
+| `success`   | `bool`   | Whether the command was successful |
+| `message`   | `string` | Message describing result          |
+| `device_id` | `string` | Affected device ID                 |
+
+#### DeviceStatusRequest
+
+| Field       | Type     | Description           |
+|-------------|----------|-----------------------|
+| `device_id` | `string` | ID of device to query |
+
+#### DeviceStatusResponse
+
+| Field          | Type                 | Description                                 |
+|----------------|----------------------|---------------------------------------------|
+| `device_id`    | `string`             | Device ID                                   |
+| `device_type`  | `DeviceType`         | Type of device                              |
+| `status`       | `DeviceStatus`       | Current status                              |
+| `name`         | `string`             | Device name                                 |
+| `location`     | `string`             | Device location                             |
+| `properties`   | `map<string,string>` | Current properties (brightness, temp, etc.) |
+| `last_updated` | `int64`              | Last updated timestamp                      |
+
+#### ListDevicesRequest
+
+| Field         | Type         | Description                              |
+|---------------|--------------|------------------------------------------|
+| `filter_type` | `DeviceType` | Optional filter for specific device type |
+
+#### ListDevicesResponse
+
+| Field     | Type                  | Description                |
+|-----------|-----------------------|----------------------------|
+| `devices` | `repeated DeviceInfo` | List of registered devices |
+
+#### DeviceInfo
+
+| Field         | Type           | Description        |
+|---------------|----------------|--------------------|
+| `device_id`   | `string`       | ID of the device   |
+| `device_type` | `DeviceType`   | Type of the device |
+| `status`      | `DeviceStatus` | Current status     |
+| `name`        | `string`       | Device name        |
+| `location`    | `string`       | Device location    |
+
+#### StreamSensorRequest
+
+| Field              | Type              | Description                          |
+|--------------------|-------------------|--------------------------------------|
+| `device_ids`       | `repeated string` | List of sensor device IDs to monitor |
+| `interval_seconds` | `int32`           | Reporting interval in seconds        |
+
+#### SensorDataResponse
+
+| Field           | Type                 | Description                                  |
+|-----------------|----------------------|----------------------------------------------|
+| `device_id`     | `string`             | Sensor device ID                             |
+| `sensor_type`   | `DeviceType`         | Type of sensor                               |
+| `sensor_values` | `map<string,double>` | Sensor values (e.g., temp=22.5, humidity=60) |
+| `timestamp`     | `int64`              | Timestamp of reading                         |
 
 ---
 
